@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
 import { PrismaService } from 'src/common/prisma.service';
@@ -44,6 +44,23 @@ export class AgentService {
   remove(id: string): Promise<Agent> {
     return this.db.agent.delete({
       where: { id: id },
+    });
+  }
+
+  preview(id: string, req: { input: string }): Promise<{ output: string }> {
+    return this.db.$transaction(async (tx) => {
+      const agent = await tx.agent.findUnique({
+        where: { id: id },
+      });
+
+      if (!agent) {
+        throw new NotFoundException(`Agent with ID ${id} not found`);
+      }
+
+      // Simulate agent processing the input
+      const output = `Agent ${agent.id} processed input: ${req.input}`;
+
+      return { output };
     });
   }
 }
