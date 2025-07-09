@@ -4,8 +4,8 @@ CREATE TABLE "users" (
     "name" TEXT,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -14,11 +14,10 @@ CREATE TABLE "users" (
 CREATE TABLE "agents" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "serviceType" TEXT NOT NULL,
-    "communicationStyle" TEXT NOT NULL,
+    "communication_style" TEXT NOT NULL,
     "personality" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "agents_pkey" PRIMARY KEY ("id")
 );
