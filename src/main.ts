@@ -9,6 +9,7 @@ async function bootstrap() {
     .setTitle('Customer Service AI')
     .setDescription('AI-Powered Customer Service Agents')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
