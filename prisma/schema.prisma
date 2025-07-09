@@ -14,12 +14,27 @@ datasource db {
 }
 
 model user {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   name      String?
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  agent     agent[]
 
   @@map("users")
+}
+
+model agent {
+  id                 String   @id @default(uuid())
+  userId             String
+  serviceType        String // e.g., "support", "sales", "general"
+  communicationStyle String // e.g., "formal", "casual", "friendly"
+  personality        String? // JSON string for personality traits
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("agents")
 }

@@ -4,15 +4,16 @@ const prisma = new PrismaClient();
 async function main() {
   const name = 'Damas Amirul Karim';
   const password = 'rahasia';
+  const email = 'damasamirulkarim@gmail.com';
 
+  // Create new user or find existing
   const user = await prisma.user.upsert({
-    where: { email: 'damasamirulkarim@gmail.com' },
-    update: {
-      password: password,
-      name: name,
+    where: {
+      email: email,
     },
+    update: {},
     create: {
-      email: 'damasamirulkarim@gmail.com',
+      email: email,
       password: password,
       name: name,
     },
