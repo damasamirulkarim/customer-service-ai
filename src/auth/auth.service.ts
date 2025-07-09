@@ -11,10 +11,7 @@ export class AuthService {
 
   private logger = new Logger(AuthService.name);
 
-  async signIn(
-    email: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
+  async signIn(email: string, password: string): Promise<{ token: string }> {
     const user = await this.db.user.findUnique({
       where: { email },
     });
@@ -35,7 +32,7 @@ export class AuthService {
     };
 
     return {
-      access_token: await this.jwt.signAsync(payload),
+      token: await this.jwt.signAsync(payload),
     };
   }
 }
