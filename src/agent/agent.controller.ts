@@ -11,11 +11,12 @@ import {
 import { AgentService } from './agent.service';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { PreviewAgentDto } from './dto/preview-agent.dto';
 import { GetUserId } from 'src/auth/auth.decorator';
 
+@ApiTags('Agents')
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller('agents')

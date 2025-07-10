@@ -55,7 +55,16 @@ export class AgentService {
     });
   }
 
-  remove(id: string): Promise<Agent> {
+  async remove(id: string): Promise<Agent> {
+    // Check if the agent exists before attempting to delete
+    await this.db.agent
+      .findUniqueOrThrow({
+        where: { id: id },
+      })
+      .catch(() => {
+        throw new NotFoundException(`Agent with ID ${id} not found`);
+      });
+
     return this.db.agent.delete({
       where: { id: id },
     });
@@ -72,7 +81,7 @@ export class AgentService {
       }
 
       // Create a system prompt that incorporates the agent's personality
-      const systemPrompt = `You are a customer service agent with the following tone: ${agent.personality}. You communicate in ${agent.language}.`;
+      const systemPrompt = `You are a customer service agent with a ${agent.personality} tone, communicating in ${agent.language}. Keep your responses concise, helpful, and aligned with your ${agent.personality} personality. Avoid unnecessary repetition or translations unless explicitly requested by the user. Focus on addressing the user's needs directly.`;
 
       // Generate AI response using DeepSeek
       const response = await this.createChatCompletion({
