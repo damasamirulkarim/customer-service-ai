@@ -14,6 +14,7 @@ import { UpdateAgentDto } from './dto/update-agent.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { PreviewAgentDto } from './dto/preview-agent.dto';
+import { GetUserId } from 'src/auth/auth.decorator';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
@@ -22,34 +23,56 @@ export class AgentController {
   constructor(private readonly agentService: AgentService) {}
 
   @Post()
-  create(@Body() req: CreateAgentDto) {
-    const userId = 'x';
-    return this.agentService.create(req, userId);
+  async create(@Body() req: CreateAgentDto, @GetUserId() userId: string) {
+    const result = await this.agentService.create(req, userId);
+    return {
+      message: 'Agent created successfully',
+      data: result,
+    };
   }
 
   @Get()
-  findAll() {
-    const userId = 'x';
-    return this.agentService.findAll(userId);
+  async findAll(@GetUserId() userId: string) {
+    const result = await this.agentService.findAll(userId);
+    return {
+      message: 'Agents retrieved successfully',
+      data: result,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.agentService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.agentService.findOne(id);
+    return {
+      message: 'Agent retrieved successfully',
+      data: result,
+    };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() req: UpdateAgentDto) {
-    return this.agentService.update(id, req);
+  async update(@Param('id') id: string, @Body() req: UpdateAgentDto) {
+    const result = await this.agentService.update(id, req);
+    return {
+      message: 'Agent updated successfully',
+      data: result,
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.agentService.remove(id);
+  async remove(@Param('id') id: string) {
+    const result = await this.agentService.remove(id);
+    return {
+      message: 'Agent deleted successfully',
+      data: result,
+    };
   }
 
   @Post(':id/preview')
-  preview(@Param('id') id: string, @Body() req: PreviewAgentDto) {
-    return this.agentService.preview(id, req);
+  async preview(@Param('id') id: string, @Body() req: PreviewAgentDto) {
+    const result = await this.agentService.preview(id, req);
+    return {
+      message: 'Agent preview generated successfully',
+      data: result,
+    };
   }
 }
