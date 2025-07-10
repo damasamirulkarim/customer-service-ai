@@ -11,7 +11,6 @@ export class AgentService {
   async create(req: CreateAgentDto, userId: string): Promise<Agent> {
     return await this.db.agent.create({
       data: {
-        communicationStyle: req.communicationStyle,
         personality: req.personality,
         userId: userId,
       },
@@ -35,7 +34,6 @@ export class AgentService {
     return this.db.agent.update({
       where: { id: id },
       data: {
-        communicationStyle: req.communicationStyle,
         personality: req.personality,
       },
     });

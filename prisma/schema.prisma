@@ -26,12 +26,11 @@ model user {
 }
 
 model agent {
-  id                 String   @id @default(uuid())
-  userId             String
-  communicationStyle String   @map("communication_style")
-  personality        String? // JSON string for personality traits
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
+  id          String   @id @default(uuid())
+  userId      String
+  personality String   @default("professional") // e.g., "professional", "friendly", "casual"
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   user user @relation(fields: [userId], references: [id], onDelete: Cascade)
 

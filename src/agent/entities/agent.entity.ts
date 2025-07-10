@@ -1,7 +1,6 @@
 export class Agent {
   id: string;
-  communicationStyle: string;
-  personality?: string | null;
+  personality: string;
   createdAt: Date;
   updatedAt: Date;
 }
