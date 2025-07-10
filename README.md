@@ -2,6 +2,8 @@
 
 AI-Powered Customer Service Agents
 
+![AI Customer Service](docs/swagger.png)
+
 ## Project setup
 
 ```bash
