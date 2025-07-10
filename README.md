@@ -4,6 +4,16 @@ AI-Powered Customer Service Agents
 
 ![AI Customer Service](docs/swagger.png)
 
+### Roadmap
+
+- [x] Develop APIs for AI agent management
+- [x] Integrate Deepseek models for AI responses
+- [x] Implement real-time agent behavior previews
+- [ ] Add agent performance monitoring
+- [ ] Implement context intent recognition
+- [ ] Build knowledge base integration
+- [ ] Add semantic caching layer
+
 ## Project setup
 
 ```bash
