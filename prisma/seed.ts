@@ -1,9 +1,10 @@
 import { PrismaClient } from '@prisma/client';
+import { hashPassword } from '../src/common/utils';
 const prisma = new PrismaClient();
 
 async function main() {
   const name = 'Damas Amirul Karim';
-  const password = 'rahasia';
+  const password = await hashPassword('rahasia');
   const email = 'damasamirulkarim@gmail.com';
 
   // Create new user or find existing
@@ -11,7 +12,10 @@ async function main() {
     where: {
       email: email,
     },
-    update: {},
+    update: {
+      name: name,
+      password: password,
+    },
     create: {
       email: email,
       password: password,

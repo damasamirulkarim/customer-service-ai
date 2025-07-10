@@ -1,6 +1,7 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/common/prisma.service';
+import { comparePassword } from 'src/common/utils';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,8 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    if (user.password !== password) {
+    const isMatch = await comparePassword(password, user.password);
+    if (!isMatch) {
       this.logger.warn(`Failed login attempt for user: ${user.id}`);
       throw new UnauthorizedException();
     }
