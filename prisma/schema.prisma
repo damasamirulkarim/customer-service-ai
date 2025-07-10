@@ -28,6 +28,7 @@ model user {
 model agent {
   id          String   @id @default(uuid())
   userId      String
+  language    String   @default("indonesian") // e.g., "indonesian", "english", "spanish"
   personality String   @default("professional") // e.g., "professional", "friendly", "casual"
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")

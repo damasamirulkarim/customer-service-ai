@@ -1,16 +1,31 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateAgentDto } from './dto/create-agent.dto';
-import { UpdateAgentDto } from './dto/update-agent.dto';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  CreateAgentDto,
+  UpdateAgentDto,
+  PreviewAgentDto,
+  ChatResponseDto,
+  ChatCompletionDto,
+} from './dto';
 import { PrismaService } from 'src/common/prisma.service';
 import { Agent } from './entities/agent.entity';
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AgentService {
-  constructor(private readonly db: PrismaService) {}
+  constructor(
+    private readonly db: PrismaService,
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  private logger = new Logger(AgentService.name);
 
   async create(req: CreateAgentDto, userId: string): Promise<Agent> {
     return await this.db.agent.create({
       data: {
+        language: req.language,
         personality: req.personality,
         userId: userId,
       },
@@ -35,6 +50,7 @@ export class AgentService {
       where: { id: id },
       data: {
         personality: req.personality,
+        language: req.language,
       },
     });
   }
@@ -45,9 +61,9 @@ export class AgentService {
     });
   }
 
-  preview(id: string, req: { input: string }): Promise<{ output: string }> {
-    return this.db.$transaction(async (tx) => {
-      const agent = await tx.agent.findUnique({
+  async preview(id: string, req: PreviewAgentDto): Promise<{ output: string }> {
+    try {
+      const agent = await this.db.agent.findUnique({
         where: { id: id },
       });
 
@@ -55,10 +71,52 @@ export class AgentService {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
 
-      // Simulate agent processing the input
-      const output = `Agent ${agent.id} processed input: ${req.input}`;
+      // Create a system prompt that incorporates the agent's personality
+      const systemPrompt = `You are a customer service agent with the following tone: ${agent.personality}. You communicate in ${agent.language}.`;
+
+      // Generate AI response using DeepSeek
+      const response = await this.createChatCompletion({
+        messages: [
+          {
+            role: 'system',
+            content: systemPrompt,
+          },
+          {
+            role: 'user',
+            content: req.input,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+      });
+
+      const output = response.choices[0].message.content;
 
       return { output };
-    });
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.logger.error(`Error in preview: ${error.message}`, error.stack);
+      return {
+        output: '',
+      };
+    }
+  }
+
+  /**
+   * Create a chat completion using DeepSeek API
+   * @param chatCompletionDto - The chat completion request data
+   * @returns Promise<ChatResponseDto> - The AI response
+   */
+  async createChatCompletion(
+    chatCompletionDto: ChatCompletionDto,
+  ): Promise<ChatResponseDto> {
+    const { data } = await firstValueFrom(
+      this.httpService.post<ChatResponseDto>('/chat/completions', {
+        model: this.configService.get<string>('DEEPSEEK_MODEL'),
+        ...chatCompletionDto,
+      }),
+    );
+    this.logger.debug(data.usage);
+    return data;
   }
 }
